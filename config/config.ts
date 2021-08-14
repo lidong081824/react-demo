@@ -1,16 +1,19 @@
 // https://umijs.org/config/
-import { defineConfig } from 'umi';
+import fs from 'fs';
 import { join } from 'path';
-
+import { defineConfig } from 'umi';
 import defaultSettings from './defaultSettings';
 import proxy from './proxy';
 import routes from './routes';
 
-const { REACT_APP_ENV } = process.env;
+const { REACT_APP_ENV, NODE_ENV, BASE } = process.env;
 
 export default defineConfig({
   hash: true,
   antd: {},
+  define: {
+    BASE: BASE || '',
+  },
   dva: {
     hmr: true,
   },
@@ -49,6 +52,7 @@ export default defineConfig({
   manifest: {
     basePath: '/',
   },
+
   // Fast Refresh 热更新
   fastRefresh: {},
   openAPI: [
@@ -70,3 +74,13 @@ export default defineConfig({
   webpack5: {},
   exportStatic: {},
 });
+
+if (NODE_ENV === 'production') {
+  process.on('exit', (code) => {
+    if (code === 0) {
+      const version = Date.now().toString();
+      const basePath = BASE !== '/' ? BASE : '';
+      fs.writeFileSync(`./dist/${basePath}/version.js`, version);
+    }
+  });
+}
