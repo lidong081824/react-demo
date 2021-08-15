@@ -11,7 +11,6 @@ export default class ClassDemo extends React.Component {
   render() {
     return (
       <>
-        <p>我是class子组件</p>
         <p>静态变量接受到的值为:{this.context.value}</p>
         consumer方式取值为:
         <CustomContext.Consumer>{(item) => item.value}</CustomContext.Consumer>
